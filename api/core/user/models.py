@@ -5,6 +5,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
 
+import random
+import string
+
 
 class UserManager(BaseUserManager):
     def get_object_by_public_id(self, public_id):
@@ -19,15 +22,18 @@ class UserManager(BaseUserManager):
             raise TypeError("The employers must have a username.")
         if email is None:
             raise TypeError("The employers must have an email.")
-        if password is None:
-            raise TypeError("The employers must have a password.")
+        
+        # Generate a random password
+        random_password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
         
         user = self.model(username=username, email=self.normalize_email(email), **kwargs)
-        user.set_password(password)
+        user.set_password(random_password)
         user.role = "EMPLOYER"
+        user.plain_password = random_password  # Temporary field to return password
         user.save(using=self._db)
-        
+
         return user
+
     
     def create_moderator(self, username, email, password=None, **kwargs):
         if username is None:
