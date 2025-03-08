@@ -15,7 +15,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_superuser or self.request.user.role == "MODERATOR":
             return User.objects.all()
-        return User.objects.exclude(is_superuser=True).exclude(role="MODERATOR")
+        return User.objects.filter(username=self.request.user.username)
     
     def get_object(self):
         try:
