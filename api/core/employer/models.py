@@ -13,6 +13,8 @@ class Employer(models.Model):
     stage = models.IntegerField(default=0)
     is_true_attender = models.BooleanField(default=False)
 
+    introduction_summary = models.TextField(null=True)
+
     programming_skill = models.IntegerField(default=0, max_length=100)
     logical_thinking = models.IntegerField(default=0, max_length=100)
     case_study = models.IntegerField(default=0, max_length=100)

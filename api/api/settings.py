@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     "core",
     "core.user",
     "core.auth",
-    "core.employer"
+    "core.employer",
+    "core.ai_interview"
 ]
 
 MIDDLEWARE = [
