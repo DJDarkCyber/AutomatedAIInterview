@@ -1,36 +1,36 @@
 import React from "react";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
-import { useUserActions } from "../../hooks/user.actions"; // Import useUserActions
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useUserActions } from "../../hooks/user.actions";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Header = () => {
-  const userActions = useUserActions(); // Access user actions
-  const navigate = useNavigate(); // For navigation
+  const userActions = useUserActions();
+  const navigate = useNavigate();
 
-  // Handle logout
   const handleLogout = () => {
-    userActions.logout(); // Call the logout function
-    navigate("/"); // Redirect to the home page
+    userActions.logout();
+    navigate("/");
   };
 
   return (
     <Navbar bg="white" expand="lg" className="shadow-sm">
       <Container fluid>
-        {/* Logo on the left */}
         <Navbar.Brand href="#" className="ml-4">
-          <img
-            src="https://via.placeholder.com/150x50?text=Logo" // Replace with your logo
-            alt="Logo"
-            className="h-8"
-          />
+          <Link to="/">
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="h-8"
+              height={27}
+            />
+          </Link>
         </Navbar.Brand>
 
-        {/* Headline in the center */}
         <Navbar.Text className="mx-auto text-2xl font-bold text-gray-800">
           Interview
         </Navbar.Text>
 
-        {/* Logout button on the right */}
         <Nav className="ml-auto mr-4">
           <Button
             variant="danger"

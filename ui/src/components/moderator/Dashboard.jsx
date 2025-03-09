@@ -4,18 +4,20 @@ import axios from "axios";
 import Header from "./Header";
 
 const Dashboard = () => {
-  const [employers, setEmployers] = useState([]); // State to store employer data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const [showEditModal, setShowEditModal] = useState(false); // Edit modal visibility
-  const [selectedEmployer, setSelectedEmployer] = useState(null); // Selected employer for editing
-  const [updatedData, setUpdatedData] = useState({}); // Updated employer data
-  const [showChatModal, setShowChatModal] = useState(false); // Chat modal visibility
-  const [chatLogs, setChatLogs] = useState([]); // Chat logs for the selected employer
-  const [showScoreModal, setShowScoreModal] = useState(false); // Score modal visibility
-  const [employerScores, setEmployerScores] = useState(null); // Scores for the selected employer
 
-  // Fetch employer data from the API using Axios
+  document.title = "AI Interview | Dashboard"
+
+  const [employers, setEmployers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedEmployer, setSelectedEmployer] = useState(null);
+  const [updatedData, setUpdatedData] = useState({}); 
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatLogs, setChatLogs] = useState([]);
+  const [showScoreModal, setShowScoreModal] = useState(false);
+  const [employerScores, setEmployerScores] = useState(null);
+
   const fetchEmployers = async () => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
@@ -31,11 +33,11 @@ const Dashboard = () => {
         },
       });
 
-      setEmployers(response.data); // Set the fetched data
+      setEmployers(response.data);
     } catch (err) {
-      setError(err.message); // Set error message
+      setError(err.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -43,14 +45,12 @@ const Dashboard = () => {
     fetchEmployers();
   }, []);
 
-  // Handle Edit button click
   const handleEdit = (employer) => {
     setSelectedEmployer(employer);
-    setUpdatedData(employer); // Initialize updated data with the selected employer's data
+    setUpdatedData(employer);
     setShowEditModal(true);
   };
 
-  // Handle Delete button click
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this employer?")) {
       try {
@@ -67,7 +67,6 @@ const Dashboard = () => {
           },
         });
 
-        // Refresh the employer list after deletion
         fetchEmployers();
       } catch (err) {
         setError(err.message);
@@ -75,7 +74,6 @@ const Dashboard = () => {
     }
   };
 
-  // Handle View button click
   const handleView = async (id) => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
@@ -85,7 +83,6 @@ const Dashboard = () => {
         throw new Error("No access token found");
       }
 
-      // Fetch chat logs for the selected employer
       const response = await axios.get(
         `http://127.0.0.1:8000/api/ai_interview/chatlog/?employer_id=${id}`,
         {
@@ -95,14 +92,13 @@ const Dashboard = () => {
         }
       );
 
-      setChatLogs(response.data); // Set the fetched chat logs
-      setShowChatModal(true); // Open the chat modal
+      setChatLogs(response.data);
+      setShowChatModal(true);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Handle View Score button click
   const handleViewScore = async (id) => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
@@ -112,7 +108,6 @@ const Dashboard = () => {
         throw new Error("No access token found");
       }
 
-      // Fetch employer details (including scores)
       const response = await axios.get(
         `http://127.0.0.1:8000/api/employer/${id}/`,
         {
@@ -122,14 +117,13 @@ const Dashboard = () => {
         }
       );
 
-      setEmployerScores(response.data); // Set the fetched scores
-      setShowScoreModal(true); // Open the score modal
+      setEmployerScores(response.data);
+      setShowScoreModal(true);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Handle form submission for editing
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -150,22 +144,21 @@ const Dashboard = () => {
         }
       );
 
-      // Refresh the employer list after editing
       fetchEmployers();
-      setShowEditModal(false); // Close the modal
+      setShowEditModal(false);
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-100">
       <Header onEmployerCreated={fetchEmployers} />
+      <div className="p-2">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         Scheduled Interviews
       </h2>
 
-      {/* Loading State */}
       {loading && (
         <div className="flex justify-center items-center h-40">
           <Spinner animation="border" role="status">
@@ -174,16 +167,14 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Error State */}
       {error && (
         <div className="text-center text-red-600 mb-4">
           Error: {error}
         </div>
       )}
 
-      {/* Table */}
       {!loading && !error && (
-        <Table striped bordered hover className="bg-white shadow-sm rounded-lg">
+        <Table striped bordered hover className="bg-white shadow-sm rounded-lg p-1">
           <thead>
             <tr>
               <th>#</th>
@@ -214,11 +205,12 @@ const Dashboard = () => {
                   </span>
                 </td>
                 <td>{new Date(employer.created_at).toLocaleDateString()}</td>
-                <td>
+                <td className="flex align-middle justify-center text-center items-center gap-3">
                   <Button
                     variant="info"
                     size="sm"
-                    className="mr-2"
+                    style={{'borderRadius': '10px'}}
+                    className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                     onClick={() => handleEdit(employer)}
                   >
                     Edit
@@ -226,7 +218,8 @@ const Dashboard = () => {
                   <Button
                     variant="danger"
                     size="sm"
-                    className="mr-2"
+                    style={{'borderRadius': '10px'}}
+                    className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                     onClick={() => handleDelete(employer.id)}
                   >
                     Delete
@@ -234,7 +227,8 @@ const Dashboard = () => {
                   <Button
                     variant="success"
                     size="sm"
-                    className="mr-2"
+                    style={{'borderRadius': '10px'}}
+                    className="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                     onClick={() => handleView(employer.id)}
                   >
                     View
@@ -242,6 +236,8 @@ const Dashboard = () => {
                   <Button
                     variant="warning"
                     size="sm"
+                    style={{'borderRadius': '10px'}}
+                    className="rounded-md bg-amber-600 py-2 px-4 border border-transparent text-center text-sm text-slate-800 transition-all shadow-md hover:shadow-lg focus:bg-amber-700 focus:shadow-none active:bg-amber-700 hover:bg-amber-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                     onClick={() => handleViewScore(employer.id)}
                   >
                     View Score
@@ -253,7 +249,6 @@ const Dashboard = () => {
         </Table>
       )}
 
-      {/* Edit Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Employer</Modal.Title>
@@ -306,6 +301,7 @@ const Dashboard = () => {
                 }
               >
                 <option value="PENDING">PENDING</option>
+                <option value="IN_PROGRESS">IN PROGRESS</option>
                 <option value="COMPLETED">COMPLETED</option>
               </Form.Control>
             </Form.Group>
@@ -316,7 +312,6 @@ const Dashboard = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Chat Logs Modal */}
       <Modal
         show={showChatModal}
         onHide={() => setShowChatModal(false)}
@@ -346,7 +341,6 @@ const Dashboard = () => {
         </Modal.Body>
       </Modal>
 
-      {/* View Score Modal */}
       <Modal
         show={showScoreModal}
         onHide={() => setShowScoreModal(false)}
@@ -372,6 +366,7 @@ const Dashboard = () => {
           )}
         </Modal.Body>
       </Modal>
+      </div>
     </div>
   );
 };

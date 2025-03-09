@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Navbar, Container, Nav, Button, Modal, Form, Alert } from "react-bootstrap";
 import axios from "axios";
-import { useUserActions } from "../../hooks/user.actions"; // Import useUserActions
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useUserActions } from "../../hooks/user.actions";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Header = ({ onEmployerCreated }) => {
-  const [showModal, setShowModal] = useState(false); // Modal visibility
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -13,19 +14,17 @@ const Header = ({ onEmployerCreated }) => {
     last_name: "",
     field_of_interview: "",
   });
-  const [generatedPassword, setGeneratedPassword] = useState(""); // Generated password
-  const [error, setError] = useState(null); // Error state
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const [error, setError] = useState(null);
 
-  const userActions = useUserActions(); // Access user actions
-  const navigate = useNavigate(); // For navigation
+  const userActions = useUserActions();
+  const navigate = useNavigate();
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -36,14 +35,12 @@ const Header = ({ onEmployerCreated }) => {
         throw new Error("No access token found");
       }
 
-      // Prepare the data for the API request
       const payload = {
         ...formData,
         role: "EMPLOYER",
-        password: "dummypass", // Set a dummy password
+        password: "dummypass",
       };
 
-      // Send the POST request
       const response = await axios.post(
         "http://127.0.0.1:8000/api/auth/register/",
         payload,
@@ -54,11 +51,9 @@ const Header = ({ onEmployerCreated }) => {
         }
       );
 
-      // Show the generated password to the user
       setGeneratedPassword(response.data.password);
-      setError(null); // Clear any previous errors
+      setError(null);
 
-      // Invoke the callback to refresh the employer list
       if (onEmployerCreated) {
         onEmployerCreated();
       }
@@ -67,7 +62,6 @@ const Header = ({ onEmployerCreated }) => {
     }
   };
 
-  // Close the modal and reset the form
   const handleCloseModal = () => {
     setShowModal(false);
     setFormData({
@@ -81,51 +75,49 @@ const Header = ({ onEmployerCreated }) => {
     setError(null);
   };
 
-  // Handle logout
   const handleLogout = () => {
-    userActions.logout(); // Call the logout function
-    navigate("/"); // Redirect to the home page
+    userActions.logout();
+    navigate("/");
   };
 
   return (
     <>
       <Navbar bg="white" expand="lg" className="shadow-sm">
         <Container fluid>
-          {/* Logo on the left */}
           <Navbar.Brand href="#" className="ml-4">
-            <img
-              src="https://via.placeholder.com/150x50?text=Logo" // Replace with your logo
-              alt="Logo"
-              className="h-8"
-            />
+            <Link to="/">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="h-8"
+              />
+            </Link>
           </Navbar.Brand>
 
-          {/* Headline in the center */}
           <Navbar.Text className="mx-auto text-2xl font-bold text-gray-800">
             Moderator Dashboard
           </Navbar.Text>
 
-          {/* "Schedule new interview" and "Logout" buttons on the right */}
           <Nav className="ml-auto mr-4">
             <Button
-              variant="primary"
-              className="bg-blue-600 hover:bg-blue-700 mr-2"
+            variant="dark"
+            style={{'borderRadius': '10px'}}
+              className="rounded-full bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" 
               onClick={() => setShowModal(true)}
             >
               Schedule New Interview
             </Button>
-            <Button
-              variant="danger"
-              className="bg-red-600 hover:bg-red-700"
+            <button
+              style={{'borderRadius': '10px'}}
+              className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700 hover:bg-red-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 ml-2"
               onClick={handleLogout}
             >
               Logout
-            </Button>
+            </button>
           </Nav>
         </Container>
       </Navbar>
 
-      {/* Schedule New Interview Modal */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Schedule New Interview</Modal.Title>

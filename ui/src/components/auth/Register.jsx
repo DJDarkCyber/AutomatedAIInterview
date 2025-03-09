@@ -3,7 +3,7 @@ import { Form, Button, Spinner } from "react-bootstrap";
 import { useUserActions } from "../../hooks/user.actions";
 import AuthHeader from "./Header";
 
-function LoginForm() {
+function RegisterForm() {
 
   document.title = "AI Interview | Home"
 
@@ -11,6 +11,9 @@ function LoginForm() {
   const [form, setForm] = useState({
     username: "",
     password: "",
+    first_name: "",
+    last_name: "",
+    email: ""
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,9 +21,9 @@ function LoginForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const loginForm = event.currentTarget;
+    const registerForm = event.currentTarget;
 
-    if (loginForm.checkValidity() === false) {
+    if (registerForm.checkValidity() === false) {
       event.stopPropagation();
       setValidated(true);
       return;
@@ -30,16 +33,20 @@ function LoginForm() {
     setLoading(true);
 
     const data = {
-      email: form.username,
+      email: form.email,
+      username: form.username,
+      first_name: form.first_name,
+      last_name: form.last_name,
+      role: "MODERATOR",
       password: form.password,
     };
 
     try {
-      await userActions.login(data);
+      await userActions.register(data);
       setError(null);
     } catch (err) {
       if (err.message) {
-        setError(err.request.response || "An error occurred during login.");
+        setError(err.request.response || "An error occurred during register.");
       }
     } finally {
       setLoading(false);
@@ -58,8 +65,20 @@ function LoginForm() {
       onSubmit={handleSubmit}
     >
       <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">
-        Login
+        Register
       </h2>
+
+      <Form.Group className="mb-4">
+        <Form.Label className="text-gray-700">Email</Form.Label>
+        <Form.Control
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+          type="email"
+          placeholder="Enter your email"
+          className="rounded-lg"
+        />
+      </Form.Group>
 
       <Form.Group className="mb-4">
         <Form.Label className="text-gray-700">Username</Form.Label>
@@ -77,6 +96,32 @@ function LoginForm() {
       </Form.Group>
 
       <Form.Group className="mb-4">
+        <Form.Label className="text-gray-700">First Name</Form.Label>
+        <Form.Control
+          value={form.first_name}
+          onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+          required
+          type="text"
+          placeholder="Enter your first name"
+          className="rounded-lg"
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-4">
+        <Form.Label className="text-gray-700">Last Name</Form.Label>
+        <Form.Control
+          value={form.last_name}
+          onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+          required
+          type="text"
+          placeholder="Enter your last name"
+          className="rounded-lg"
+        />
+      </Form.Group>
+
+
+
+      <Form.Group className="mb-4">
         <Form.Label className="text-gray-700">Password</Form.Label>
         <Form.Control
           value={form.password}
@@ -92,9 +137,10 @@ function LoginForm() {
         </Form.Control.Feedback>
       </Form.Group>
 
+
       {error && (
         <div className="mb-4 text-center text-sm text-red-600">
-          {typeof error === "string" ? error : "An error occurred during login."}
+          {typeof error === "string" ? error : "An error occurred during register."}
         </div>
       )}
 
@@ -114,10 +160,10 @@ function LoginForm() {
               aria-hidden="true"
               className="mr-2"
             />
-            Logging in...
+            Registering in...
           </>
         ) : (
-          "Login"
+          "Register"
         )}
       </Button>
     </Form>
@@ -126,4 +172,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;
