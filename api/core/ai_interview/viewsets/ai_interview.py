@@ -221,7 +221,7 @@ class AIInterviewViewSet(viewsets.ViewSet):
             In the above format, until you finish getting programming skills and logical thinking skills in interactive way, the boolean value should be 'False'.
             If you finished interviewing about the user's programming skills and logical thinking skills, your response should be in the format
 
-            <your_response_to_user> --- <programming_skill_score_of_100_in_integer> --- <logical_thinking_score_of_100_in_integer> --- True
+            <your_response_to_user> --- <programming_skill_score_of_100_in_integer> --- <problem_solving_score_of_100_in_integer> --- True
 
 
             Important: Follow the response the format until last. Don't break the response format and don't change the track.
@@ -248,11 +248,11 @@ class AIInterviewViewSet(viewsets.ViewSet):
             if len(ai_response_list) <= 2:
                 ai_message = ai_response_list[0].strip()
             elif len(ai_response_list) > 2:
-                ai_message, programming_skills_score, logical_thinking_score, is_stage_passed = ai_response_list
+                ai_message, programming_skills_score, problem_solving_skills_score, is_stage_passed = ai_response_list
                 employer = Employer.objects.get(user=user)
                 employer.stage = 3
                 employer.programming_skill = int(programming_skills_score.strip())
-                employer.logical_thinking = int(logical_thinking_score.strip())
+                employer.problem_solving = int(problem_solving_skills_score.strip())
                 employer.save()
         
         elif stage == 3:
@@ -299,7 +299,7 @@ class AIInterviewViewSet(viewsets.ViewSet):
             In the above format, until you finish getting user case study and use case skills in interactive way, the boolean value should be 'False'.
             If you finished interviewing about the user's user case study and use case skills, your response should be in the format
 
-            <your_response_to_user> --- <user_case_study_score_of_100_in_integer> --- True
+            <your_response_to_user> --- <user_case_study_score_of_100_in_integer> --- <logical_thinking_score_of_100_in_integer> --- True
 
 
             Important: Follow the response the format until last. Don't break the response format and don't change the track.
@@ -339,6 +339,7 @@ class AIInterviewViewSet(viewsets.ViewSet):
             logical_thinking_score = Employer.objects.get(user=user).logical_thinking
             programming_skills_score = Employer.objects.get(user=user).programming_skill
             case_study_score = Employer.objects.get(user=user).case_study
+            problem_solving_skills_score = Employer.objects.get(user=user).problem_solving
 
             introduction_summary = Employer.objects.get(user=user).introduction_summary
 
@@ -361,7 +362,7 @@ class AIInterviewViewSet(viewsets.ViewSet):
             From now, you are the kind and human like AI Interviewer of the company named 'Company 7' and your name is 'Agent437'. Mimick human behavior and mimick professional interviewers.
 
             You are in stage 4. In previous stage 3, you completed the testing user's case study skills. Here is the user introduction summarized in stage 1 '{introduction_summary}'
-            The user's logical thinking score is {logical_thinking_score}, the user's programming skill score is {programming_skills_score} and the user's case study skills is {case_study_score}
+            The user's logical thinking score is {logical_thinking_score}, the user's programming skill score is {programming_skills_score} and the user's case study skills is {case_study_score} and problem solving skill is {problem_solving_skills_score}
             In this stage, your job is to actually say goodbye and evalute the final score.
 
             Evaluate the final score of 100 and react according to the score. For example, if user got high score, congratulate the user, if user got low motivate or reject in nicest way as possible.
