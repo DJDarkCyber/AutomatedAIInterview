@@ -12,9 +12,10 @@ const Dashboard = () => {
   const [updatedData, setUpdatedData] = useState({}); // Updated employer data
   const [showChatModal, setShowChatModal] = useState(false); // Chat modal visibility
   const [chatLogs, setChatLogs] = useState([]); // Chat logs for the selected employer
+  const [showScoreModal, setShowScoreModal] = useState(false); // Score modal visibility
+  const [employerScores, setEmployerScores] = useState(null); // Scores for the selected employer
 
   // Fetch employer data from the API using Axios
-
   const fetchEmployers = async () => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
@@ -96,6 +97,33 @@ const Dashboard = () => {
 
       setChatLogs(response.data); // Set the fetched chat logs
       setShowChatModal(true); // Open the chat modal
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // Handle View Score button click
+  const handleViewScore = async (id) => {
+    try {
+      const authData = JSON.parse(localStorage.getItem("auth"));
+      const accessToken = authData?.access;
+
+      if (!accessToken) {
+        throw new Error("No access token found");
+      }
+
+      // Fetch employer details (including scores)
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/employer/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      setEmployerScores(response.data); // Set the fetched scores
+      setShowScoreModal(true); // Open the score modal
     } catch (err) {
       setError(err.message);
     }
@@ -206,9 +234,17 @@ const Dashboard = () => {
                   <Button
                     variant="success"
                     size="sm"
+                    className="mr-2"
                     onClick={() => handleView(employer.id)}
                   >
                     View
+                  </Button>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={() => handleViewScore(employer.id)}
+                  >
+                    View Score
                   </Button>
                 </td>
               </tr>
@@ -306,6 +342,33 @@ const Dashboard = () => {
             </Accordion>
           ) : (
             <p>No chat logs found for this employer.</p>
+          )}
+        </Modal.Body>
+      </Modal>
+
+      {/* View Score Modal */}
+      <Modal
+        show={showScoreModal}
+        onHide={() => setShowScoreModal(false)}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Employer Scores</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {employerScores ? (
+            <div>
+              <p><strong>Name:</strong> {`${employerScores.first_name} ${employerScores.last_name}`}</p>
+              <p><strong>Field of Interview:</strong> {employerScores.field_of_interview}</p>
+              <p><strong>Programming Skill:</strong> {employerScores.programming_skill}</p>
+              <p><strong>Logical Thinking:</strong> {employerScores.logical_thinking}</p>
+              <p><strong>Case Study:</strong> {employerScores.case_study}</p>
+              <p><strong>Communication Skill:</strong> {employerScores.communication_skill}</p>
+              <p><strong>Problem Solving:</strong> {employerScores.problem_solving}</p>
+              <p><strong>Overall Score:</strong> {employerScores.overall_score}</p>
+            </div>
+          ) : (
+            <p>No scores found for this employer.</p>
           )}
         </Modal.Body>
       </Modal>
