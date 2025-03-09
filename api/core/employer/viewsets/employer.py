@@ -10,14 +10,14 @@ from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 
 class EmployerViewSet(viewsets.ModelViewSet):
-    http_method_names = ("get", "post", "patch")
+    http_method_names = ("get", "post", "patch", "delete")
     serializer_class = EmployerSerializer
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         user = self.request.user
         if user.is_superuser or user.role == "MODERATOR":
-            Employer.objects.all()
+            return Employer.objects.all()
         return Employer.objects.filter(user=user)
     
     def get_object(self):

@@ -12,11 +12,15 @@ class InterviewChatLogViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         specific_user_id = self.request.query_params.get("user_id")
-
+        specific_employer_id = self.request.query_params.get("employer_id")
+        
         if user.is_superuser or user.role == "MODERATOR":
             # If an admin/mod requests chat logs of a specific user
             if specific_user_id:
                 return InterviewChatLog.objects.filter(user__public_id=specific_user_id)
+            if specific_employer_id:
+                return InterviewChatLog.objects.filter(user__employer_profile__public_id=specific_employer_id)
+
             return InterviewChatLog.objects.all()  # Admins/Mods can see all logs
         
         # Regular users can only access their own chat logs

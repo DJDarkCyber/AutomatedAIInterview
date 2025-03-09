@@ -417,4 +417,4 @@ class AIInterviewViewSet(viewsets.ViewSet):
             return Response({"ai_interviewer": "The interview have been completed already. Contact your HR."})
 
 
-        return Response({"ai_interviewer": ai_message, "previous_chats": history_chat}, status=status.HTTP_200_OK)
+        return Response({"ai_interviewer": ai_message}, status=status.HTTP_200_OK)

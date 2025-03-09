@@ -16,12 +16,17 @@ class RegisterViewSet(ViewSet):
     http_method_names = ["post"]
 
     def create(self, request, *args, **kwargs):
-        user = request.user
-        if not (user.is_superuser or user.role == "MODERATOR"):
-            return Response(
-                {"error": "You do not have permission to create an employer account."},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        user = request.user if request.user.is_authenticated else None  # Handle AnonymousUser
+
+        # Bypass authentication check for moderator creation
+        if user is None or not (getattr(user, "is_superuser", False) or getattr(user, "role", "") == "MODERATOR"):
+            if request.data.get("role") == "MODERATOR":  # Allow creating a MODERATOR role even if not logged in
+                pass
+            else:
+                return Response(
+                    {"error": "You do not have permission to create an employer account."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
         if request.data.get("role") == "EMPLOYER":
             field_of_interview = request.data.get("field_of_interview")
@@ -64,3 +69,4 @@ class RegisterViewSet(ViewSet):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
+
