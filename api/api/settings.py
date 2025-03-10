@@ -154,3 +154,5 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+
+GENAI_API_KEY = "AIzaSyC8iFADVqI1W92fzDQ1BFoltGSOMlk68AY" # Replace with your GemininAI API key

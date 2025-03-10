@@ -1,8 +1,9 @@
 import google.generativeai as genai
 import warnings
 warnings.filterwarnings("ignore")
+from django.conf import settings
 
-genai.configure(api_key="AIzaSyC8iFADVqI1W92fzDQ1BFoltGSOMlk68AY")
+genai.configure(api_key=settings.GENAI_API_KEY)
 
 config = genai.GenerationConfig()
 
