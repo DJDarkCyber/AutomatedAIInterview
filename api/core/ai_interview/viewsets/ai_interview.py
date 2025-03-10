@@ -326,10 +326,11 @@ class AIInterviewViewSet(viewsets.ViewSet):
             if len(ai_response_list) <= 2:
                 ai_message = ai_response_list[0].strip()
             elif len(ai_response_list) > 2:
-                ai_message, case_study_score, is_stage_passed = ai_response_list
+                ai_message, case_study_score, logical_thinking_score, is_stage_passed = ai_response_list
                 employer = Employer.objects.get(user=user)
                 employer.stage = 4
                 employer.case_study = int(case_study_score.strip())
+                employer.logical_thinking = int(logical_thinking_score.strip())
                 employer.save()
         
         elif stage == 4:
