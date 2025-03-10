@@ -103,10 +103,19 @@ The app is build with:
    ```sh
    git clone https://github.com/DJDarkCyber/AutomatedAIInterview
    ```
-3. Install Python packages and start api
+3. Setting up API
    ```sh
    cd api/
    pip install -r requirements.txt
+   ```
+   ```sh
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+   To configure api, go to api/api/settings.py and replace your api key in [`GENAI_API_KEY`](https://github.com/DJDarkCyber/AutomatedAIInterview/blob/main/api/api/settings.py#L158)
+
+   Finally start the server by,
+   ```sh
    python manage.py runserver
    ```
 4. Install NPM packages and start server
